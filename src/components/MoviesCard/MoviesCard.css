@@ -1,0 +1,113 @@
+.movies-cards__item {
+    background: #202020;
+    width: 100%;
+    min-height: 245px;
+}
+
+.movies-card__item-content {
+    width: 100%;
+}
+
+.movies-card__pic {
+    grid-column: 1/3;
+    grid-column-end: span 2;
+    width: 100%;
+    height: 168px;
+
+    object-fit: cover;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+}
+
+.movies-card__text {
+    display: grid;
+    grid-template-columns: 246px auto;
+    grid-template-rows: 47px auto;
+    /* width: max-content; */
+
+    padding: 0px;
+    padding-top: 8px;
+}
+
+.movies-card__title {
+    margin: 0;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 22px;
+}
+
+.movies-card__description {
+    margin: 0;
+    padding-top: 8px;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 13px;
+    color: #8B8B8B;
+    grid-column: span 2;
+    border-top: 1px solid #424242;
+    padding-top: 7px;
+}
+
+.movies-card__like {
+    background-image: url('../../images/button-like.svg');
+    background-repeat: no-repeat;
+    width: 14px;
+    width: 26px;
+    height: 25px;
+    background-color: transparent;
+    border: none;
+    justify-self: end;
+}
+
+.movies-card__like_type_notliked {
+    background-image: url('../../images/button-empty-like.svg');
+}
+
+.movies-card__like_type_selected {
+    background-image: url('../../images/button-dislike.svg');
+}
+
+@media screen and (min-width: 768px) {
+
+    .movies-card__pic {
+        height: 190px;
+        grid-column: 2/3;
+        grid-row: 1/3;
+        justify-self: end;
+        box-sizing: content-box;
+        /* max-width: 339px; */
+    }
+
+    .movies-card__title {
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 23px;
+    }
+    .movies-card__text {
+        
+        width: inherit;
+       
+    }
+
+    .movies-card__description {
+        border-top: 1px solid #424242;
+        padding-top: 7px;
+    }
+
+}
+
+@media screen and (min-width: 1280px) {
+
+.movies-card__pic {
+    height: 149px;
+  
+}
+
+
+.movies-card__title {
+    margin: 0;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+}
+}

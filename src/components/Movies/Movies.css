@@ -1,0 +1,21 @@
+.movies {
+    width: 100%;
+    /* margin: 17px 0 0; */
+    padding: 0 10px;
+    align-self: start;
+    box-sizing: border-box;
+}
+
+@media screen and (min-width: 768px) {
+    .movies {
+        padding: 0px 30px 98px;
+        /* padding: 0 30px; */
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 1280px) {
+    .movies {
+        padding: 0 70px;
+    }
+}
