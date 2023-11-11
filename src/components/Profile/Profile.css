@@ -163,7 +163,7 @@ profile__edit-message_disable {
 
     .profile {
         align-items: center;
-        height: 100%;
+        /* height: 100%; */
     }
 
     .profile__links {
@@ -176,6 +176,7 @@ profile__edit-message_disable {
     }
 
     .profile__content {
+        height: auto;
         align-content: center;
         width: 410px;
         padding-top: 236px;

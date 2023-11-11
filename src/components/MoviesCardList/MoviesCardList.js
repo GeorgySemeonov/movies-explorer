@@ -6,7 +6,7 @@ import '../../vendor/hover.css';
 
 function MoviesCardList({ movies, error }) {
 
-  const [maxMovies, setMaxMovies] = React.useState(0); //
+  const [maxMovies, setMaxMovies] = React.useState(0);
   const [step, setStep] = React.useState(0);
   const location = useLocation();
 
@@ -26,10 +26,10 @@ function MoviesCardList({ movies, error }) {
       setMaxMovies(8);
       setStep(2);
     } else if (width <= 1279) {
-      setMaxMovies(12);
-      setStep(3);
+      setMaxMovies(16);
+      setStep(4);
     } else {
-      setMaxMovies(12);
+      setMaxMovies(16);
       setStep(4);
     }
   };
