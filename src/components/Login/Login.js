@@ -1,11 +1,13 @@
 import React from "react";
 import Form from "../Form/Form";
 
-function Login({ title, buttonText, linkText, bottomText, onLogin }) {
+
+function Login({ title, buttonText, linkText, bottomText ,userLogin }) {
+
   return (
     <Form
       nameForm="signin"
-      onSubmit={onLogin}
+      onSubmit={userLogin}
       title={title}
       buttonText={buttonText}
       linkText={linkText}

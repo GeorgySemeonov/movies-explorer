@@ -35,7 +35,7 @@ class MainApi {
     }).then(this._handleResponse);
   }
 
-  authorize({ email, password }) {
+  login({ email, password }) {
     return fetch(`${this._baseUrl}/sign-in`, {
       method: 'POST',
       headers: {
@@ -49,29 +49,12 @@ class MainApi {
     }).then(this._handleResponse);
   }
 
-  getUsersMovies() {
+  getSavedMovies() {
     return fetch(`${this._baseUrl}/movies`, { 
       method: 'GET',
       headers: this._getHeaders(),
     }).then(this._handleResponse);
   }
-
-  // Лайк
-  saveMovie(movie) {
-    return fetch(`${this._baseUrl}/movies`, {
-      headers: this._getHeaders(),
-      method: 'POST',
-      body: JSON.stringify(movie),
-    }).then(this._handleResponse);
-  }
-
-  deleteMovie(movieId) {
-    return fetch(`${this._baseUrl}/movies/${movieId}`, {
-      method: "DELETE",
-      headers: this._getHeaders(),
-    }).then(this._handleResponse);
-  }
-
   getUserInfo(jwt) {
     return fetch(`${this._baseUrl}/users/me`, {
       method: 'GET',
@@ -89,6 +72,22 @@ class MainApi {
       }),
     }).then(this._handleResponse);
   }
+
+  movieLike(movie) {
+    return fetch(`${this._baseUrl}/movies`, {
+      headers: this._getHeaders(),
+      method: 'POST',
+      body: JSON.stringify(movie),
+    }).then(this._handleResponse);
+  }
+
+  movieDisike(movieId) {
+    return fetch(`${this._baseUrl}/movies/${movieId}`, {
+      method: "DELETE",
+      headers: this._getHeaders(),
+    }).then(this._handleResponse);
+  }
+
 }
 
 const mainApi = new MainApi({

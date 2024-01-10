@@ -42,7 +42,7 @@ function MoviesCard({ movie }) {
       });
 
       mainApi
-        .saveMovie({
+        .movieLike({
           ...newMovie,
           image: `https://api.nomoreparties.co/${image.url}`,
           thumbnail: `https://api.nomoreparties.co/${image.formats.thumbnail.url}`,
@@ -67,7 +67,7 @@ function MoviesCard({ movie }) {
         });
     } else { 
       mainApi
-        .deleteMovie(savedId)
+        .movieDisike(savedId)
         .then(() => {
           setIsSaved(false);
           const savedMovies = JSON.parse(localStorage.getItem('savedMovies'));

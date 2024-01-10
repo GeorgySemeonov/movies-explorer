@@ -17,9 +17,12 @@ import Preloader from '../Preloader/Preloader';
 import InfoTooltip from '../InfoTooltip/InfoTooltip';
 
 import mainApi from '../../utils/MainApi';
+import moviesApi from '../../utils/MoviesApi';
 import { errors } from '../../utils/errors';
 import { useHistory } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+
+import searchFilter from '../../utils/Filter';
 
 function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
@@ -30,33 +33,87 @@ function App() {
   const history = useHistory();
   const location = useLocation();
   const [isLoading, setIsLoading] = React.useState(true); 
+  const [error, setError] =React.useState('');
   
+ 
+
   const updateCurrentUser = (updatedUserData) => {
     setCurrentUser(updatedUserData);
   };
 
-  const onLogin = async ({ email, password }) => {
-    try {
-      const jwt = await mainApi.authorize({ email, password });
-      if (jwt.token) {
-        localStorage.setItem('jwt', jwt.token);
-        const user = await mainApi.getUserInfo();
-        if (user) {
-          localStorage.setItem('userId', user.data._id);
-          setCurrentUser(user.data);
-          setLoggedIn(true);
-          setStatusInfo(true);
-          setTextError('Вы успешно вошли в аккаунт');
-          history.push('/movies');
-        }
-      }
-    } catch (err) {
-      setTextError(errors(err));
-      setStatusInfo(false);
-    } finally {
-      setInfoTooltipOpen(true);
+  const token = localStorage.getItem('token');
+
+    // сохраненные фильмы
+    React.useEffect(() => {
+    if (token) {
+      mainApi
+        .getSavedMovies(token)
+        .then((data) => localStorage.setItem('savedMovies', JSON.stringify(data)))
+        .catch((err) => console.log(err));
     }
-  };
+  }, [loggedIn]);
+
+  
+  function tokenCheck(jwt) {  
+    mainApi.getUserInfo(jwt)
+      .then((user) => {
+
+        localStorage.setItem('userId', user.data._id);
+        setCurrentUser(user.data);
+        setLoggedIn(true);
+        setStatusInfo(true);
+        setTextError('Вы успешно вошли в аккаунт');
+        history.push('/movies');
+      })
+      .catch((err) => {
+          console.error(err);
+      })
+      .finally(()=> {
+        setInfoTooltipOpen(true);
+      });
+  }
+
+  function userLogin({ email, password }) {  
+    mainApi.login({ email, password })
+
+      .then((jwt) => {
+        if (jwt.token) {
+          localStorage.setItem('jwt', jwt.token);   
+          tokenCheck(jwt.token);
+        }
+      })
+      .catch((err) => {
+        setTextError(errors(err));
+        setStatusInfo(false);
+
+        
+        // if (err === "Ошибка: 401") setPopupText("Ошибка авторизации. Возможно вы не зарегистрированы или ввели неверные данные");
+       
+      })
+      .finally(()=> {
+        setInfoTooltipOpen(true);
+      });
+  }
+
+  function userReg({name, email, password }) {
+    mainApi.register({name, email, password })
+    .then((data) => {
+      if (data) {
+        userLogin({ email, password });
+      } else {
+        history.push('/');
+      }
+    })
+      .catch((err) => {
+
+        setTextError(errors(err));
+        setStatusInfo(false);
+   
+      })
+      .finally(()=> {
+         setInfoTooltipOpen(true);
+      });
+  }
 
   const auth = useCallback(
     async (jwt, realPath) => {
@@ -110,87 +167,104 @@ function App() {
     history.push('/');
   }
 
-  const onRegister = ({ name, email, password }) => {
-    mainApi
-      .register({ name, email, password })
-      .then((data) => {
-        if (data) {
-          onLogin({ email, password });
-          setTextError('Вы успешно зарегистрировались!');
-        } else {
-          history.push('/');
-        }
-      })
-      .catch((err) => {
-        setTextError(errors(err));
-        setStatusInfo(false);
-      })
-      .finally(() => {
-        setInfoTooltipOpen(true);
-      });
-  };
+  
 
   return (
 
-    <CurrentUserContext.Provider
-    value={{ user: currentUser, updateUser: updateCurrentUser }}
-  >
+    <CurrentUserContext.Provider value={{ user: currentUser, updateUser: updateCurrentUser }}>
+      
     <div className="page">
       {isLoading ? (
         <Preloader />
       ) : (
-        <>
-          <Route path="/" exact>
-            <Header loggedIn={loggedIn} />
-          </Route>
-          <Route path="/movies" exact>
-            <Header loggedIn={loggedIn} />
-          </Route>
-          <Route path="/saved-movies" exact>
-            <Header loggedIn={loggedIn} />
-          </Route>
-          <Route path="/profile" exact>
-            <Header loggedIn={loggedIn} />
-          </Route>
 
+        // {!loggedIn ? () : () }
+        <>
+          <Route  exact  path={['/', '/movies', '/saved-movies', '/profile']}>
+            <Header loggedIn={loggedIn} />
+          </Route>
           <Route exact path="/">
             <Main />
           </Route>
+
           <Switch>
-            <Route exact path="/sign-in">
-              <Login
+
+          {/* {location.pathname === '/sign-in' && ( 
+              <Route path="*">
+                <PageNotFound />
+              </Route>
+            )} */}
+
+            <Route exact path="/sign-in"  >
+           
+             {!loggedIn ? (  <Login
                 title="Рады видеть!"
                 buttonText="Войти"
                 linkText="Регистрация"
                 bottomText="Ещё не зарегистрированы?"
-                onLogin={onLogin}
+              userLogin={userLogin}
+              /> ) : ( 
+              <Route>
+                <Header loggedIn={loggedIn} />
+              <ProtectedRoute
+                exact
+                path="/movies"
+                setIsLoading={setIsLoading}
+                loggedIn={loggedIn}
+                component={Movies}
               />
+              <Footer />
+              </Route>
+              ) } 
+            
+            
             </Route>
-            <Route exact path="/sign-up">
-              <Register
+
+            <Route exact path="/sign-up"   >
+
+            {!loggedIn ? (  <Register
+              loggedIn={loggedIn}
                 title="Добро пожаловать!"
                 buttonText="Зарегистрироваться"
                 linkText="Войти"
                 bottomText="Уже зарегистрированы?"
-                onRegister={onRegister}
+               userReg={userReg}
+              /> ) : ( 
+                <Route>
+                <Header loggedIn={loggedIn} />
+              <ProtectedRoute
+                exact
+                path="/movies"
+                setIsLoading={setIsLoading}
+                loggedIn={loggedIn}
+                component={Movies}
               />
+              <Footer />
+              </Route>
+              
+              ) } 
+              
             </Route>
 
             <ProtectedRoute
               exact
               path="/movies"
+              setIsLoading={setIsLoading}
               loggedIn={loggedIn}
               component={Movies}
             />
             <ProtectedRoute
               exact
               path="/saved-movies"
+              setIsLoading={setIsLoading}
               loggedIn={loggedIn}
               component={SavedMovies}
+              
             />
             <ProtectedRoute
               exact
               path="/profile"
+             
               loggedIn={loggedIn}
               component={Profile}
               handleLogout={handleLogout}
@@ -213,6 +287,8 @@ function App() {
             textError={textError}
           />
         </>
+
+
       )}
     </div>
   </CurrentUserContext.Provider>

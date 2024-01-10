@@ -170,6 +170,10 @@
     border-bottom: 1px solid #E8E8E8;
 }
 
+.form__inputs-item_invalid{
+    color: #EE3465;
+}
+
 .form__bottom {
     display: flex;
     flex-direction: column;

@@ -22,7 +22,7 @@ function InfoTooltip({ isOpen, onClose, isSucess, textError }) {
         ></button>
         <form className="popup__form-info">
           {isSucess ? (
-            <img className="popup__info-image" src={union} alt="Успех!" />
+            <img className="popup__info-image" src={union} alt="Успешно!" />
           ) : (
             <img className="popup__info-image" src={unionErr} alt="Ошибка" />
           )}

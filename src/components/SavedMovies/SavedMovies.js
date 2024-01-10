@@ -13,40 +13,40 @@ import {errors} from '../../utils/errors';
 
 function SavedMovies() {
 
-  const [movies, setMovies] = React.useState(
+  const [isLoading, setIsLoading] = React.useState(false); 
+  const [movieError, setMovieError] =React.useState('');
+  const [saveMovies, setSaveMovies] = React.useState(
     JSON.parse(localStorage.getItem('savedMovies')) || []
   ); 
-  const [isLoading, setIsLoading] = React.useState(false); 
-  const [error, setError] =React.useState('');
-
-  const handleSearch = (query, isShort) => {
+  
+  const savedMovieSearcher = (query, isShort) => {
     setIsLoading(true);
-    setError('');
+    setMovieError('');
     const savedMovies = JSON.parse(localStorage.getItem('savedMovies'));
     const filtered = searchFilter(savedMovies, query, isShort);
     if (filtered.length === 0) {
-      setError('Ничего не найдено');
+      setMovieError('Ничего не найдено');
     }
-    setMovies(filtered);
+    setSaveMovies(filtered);
     setIsLoading(false);
   };
 
   React.useEffect(() => {
     setIsLoading(true);
     mainApi
-      .getUsersMovies()
+      .getSavedMovies()
       .then((savedMovies) => {
-        const user = localStorage.getItem('userId');
-        const userMovies = savedMovies.filter((film) => film.owner === user);
+        const userId = localStorage.getItem('userId');
+        const userMovies = savedMovies.filter((film) => film.owner === userId);
         localStorage.setItem('savedMovies', JSON.stringify(userMovies)); 
-        setMovies(userMovies);
+        setSaveMovies(userMovies);
         setIsLoading(false);
         if (savedMovies.length === 0) {
-          setError('Вы еще ничего не добавили в избранное');
+          setMovieError('Вы еще ничего не добавили в избранное');
         }
       })
       .catch((err) => {
-        setError(errors(err));
+        setMovieError(errors(err));
       });
   }, []);
 
@@ -55,12 +55,8 @@ function SavedMovies() {
     <main>
 
 <div className="movies">
-      <SearchForm handleSearch={handleSearch} />
-      {isLoading ? (
-        <Preloader />
-      ) : (
-        <MoviesCardList movies={movies} error={error} />
-      )}
+      <SearchForm handleSearch={savedMovieSearcher} />
+      {isLoading ? (<Preloader />) : (<MoviesCardList saveMovies={saveMovies} movieError={movieError} />)}
     </div>
 
 

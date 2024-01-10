@@ -65,7 +65,18 @@
 
 .movies-card__like_type_selected {
     background-image: url('../../images/button-dislike.svg');
+    opacity: 0;
+    transition: .3s ease;
 }
+
+.movies-card__item-content:hover .movies-card__like_type_selected {
+    opacity: 1;
+    transition: .3s ease;
+  }
+/* .movies-card__like_type_selected_hover {
+   
+    opacity: 1;
+} */
 
 @media screen and (min-width: 768px) {
 

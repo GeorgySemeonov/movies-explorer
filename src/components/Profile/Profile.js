@@ -3,14 +3,18 @@ import "./Profile.css";
 import "../Form/Form.css";
 import '../../vendor/hover.css';
 import  {CurrentUserContext}  from '../../contexts/CurrentUserContext';
-
+import { useCallback, useEffect } from 'react';
+// import { useForm } from 'react-hook-form';
 import mainApi from '../../utils/MainApi';
 
 function Profile({ handleLogout }) {
 
-  const { user: currentUser, updateUser } = React.useContext(CurrentUserContext);
-  const [isEditData, setIsEditData] = React.useState(false); 
-  const [errorEdit, setErrorEdit] = React.useState(false); 
+
+const { user: currentUser, updateUser } = React.useContext(CurrentUserContext);
+// const { name, email } = currentUser;
+
+const [isEditData, setIsEditData] = React.useState(false); 
+const [errorEdit, setErrorEdit] = React.useState(false); 
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [isValidName, setIsValidName] = React.useState(false);
@@ -18,8 +22,30 @@ function Profile({ handleLogout }) {
   const [errorName, setErrorName] = React.useState('');
   const [errorEmail, setErrorEmail] = React.useState('');
   const [isActiveEdit, setIsActiveEdit] = React.useState(false);
+  const [isUserDataChanged, setUserDataChanged] = React.useState(false);
 
-  React.useEffect(() => {
+  const [values, setValues] = React.useState({});
+  const [errors, setErrors] = React.useState({});
+  const [isValid, setIsValid] = React.useState({});
+  
+  const [names, setNames] = React.useState('');
+  // function handleChange(evt) {
+  //   setIsActiveEdit(true);
+  //   const name = evt.target.name;
+  //   const value = evt.target.value;
+  //   setValues({ ...values, [name]: value.name });
+  //   setErrors({ ...errors, [name]: evt.target.validationMessage });
+  //   setIsValid(evt.target.closest('form').checkValidity());
+  // }
+  const resetForms = useCallback(
+    (updatedValues = {}, updatedErrors = {}, updatedIsValid = false) => {
+      setValues(updatedValues);
+      setErrors(updatedErrors);
+      setIsValid(updatedIsValid);
+    },
+    [setValues, setErrors, setIsValid]
+  );
+  useEffect(() => {
     if (currentUser.name !== name || currentUser.email !== email) {
       setIsEditData(false);
     } else {
@@ -27,10 +53,28 @@ function Profile({ handleLogout }) {
     }
   }, [currentUser, name, email]);
 
-  React.useEffect(() => {
+  // useEffect(() => {
+  //   setName(currentUser.name);
+  //   setEmail(currentUser.email);
+  // }, [currentUser]);
+
+  useEffect(() => {
+    values.name === name && values.email === email
+      ? setUserDataChanged(false)
+      : setUserDataChanged(true);
+  }, [values]);
+
+  useEffect(() => {
     setName(currentUser.name);
-    setEmail(currentUser.email);
-  }, [currentUser]);
+   setEmail(currentUser.email);
+    resetForms(currentUser, {}, true);
+  }, [currentUser, resetForms]);
+
+
+///_____________________________________________________________________________
+ 
+
+
 
   const handelEditProfile = ({ name, email }) => {
     mainApi
@@ -47,6 +91,13 @@ function Profile({ handleLogout }) {
       });
   };
 
+  // const handleSubmit = (evt) => {
+  //   evt.preventDefault();
+  //   handelEditProfile({ name, email }); 
+  // };
+
+//-________________________________________________________________________
+
   const handleSubmitProfile = (e) => {
     e.preventDefault();
    
@@ -59,6 +110,30 @@ function Profile({ handleLogout }) {
     }
   };
 
+  // function handleChange(event) {
+  
+  //   const name = evt.target.name;
+  //   const value = evt.target.value;
+  //   setValues({ ...values, [name]: value });
+  //   setErrors({ ...errors, [name]: evt.target.validationMessage });
+  //   setIsValid(evt.target.closest('form').checkValidity());
+  // }
+  
+
+  function handleChange(evt) {
+    setIsActiveEdit(true);
+    setIsEditData(false);
+    setNames(evt.target.value);
+    const input = evt.target;
+    setNames(input.value);
+
+    // const name = evt.target.name;
+    // const value = evt.target.value;
+    // setValues({ ...values, [name]: value.name });
+    // setErrors({ ...errors, [name]: evt.target.validationMessage });
+    setIsValid(evt.target.closest('form').checkValidity());
+  }
+
   function handleNameChange(event) {
     setIsActiveEdit(true);
     setIsEditData(false);
@@ -66,6 +141,7 @@ function Profile({ handleLogout }) {
     const input = event.target;
     setName(input.value);
     setIsValidName(input.validity.valid);
+    setIsValid(event.target.closest('form').checkValidity());
     if (!isValidName) {
       setErrorName(input.validationMessage);
     } else {
@@ -79,6 +155,7 @@ function Profile({ handleLogout }) {
     const input = event.target;
     setEmail(input.value);
     setIsValidEmail(input.validity.valid);
+    setIsValid(event.target.closest('form').checkValidity());
     if (!isValidEmail) {
       setErrorEmail(input.validationMessage);
     } else {
@@ -105,6 +182,7 @@ function Profile({ handleLogout }) {
                 Имя
               </span>
               <input
+
                 type="name"
                 className="form__inputs-item form__inputs-item_profile"
                 minLength={2}
@@ -116,7 +194,7 @@ function Profile({ handleLogout }) {
                 required
               ></input>
               <span className="form__inputs-error form__inputs-error_profile">
-                {errorName}
+               {errorName}
               </span>
             </label>
 
@@ -125,6 +203,7 @@ function Profile({ handleLogout }) {
                 E-mail
               </span>
               <input
+
                 type="email"
                 className="form__inputs-item_profile form__inputs-item_profile_last"
                 placeholder="E-mail"
@@ -150,12 +229,17 @@ function Profile({ handleLogout }) {
               Данные успешно сохранены!
             </span>
           )}
-
+ {/* <button className={`profile__button-edit link ${!isUserDataChanged || !isValid ? 'profile__button-edit_disabled' : ''}`} type="submit" disabled={!isUserDataChanged || !isValid}>Редактировать</button> */}
           <button
             type="submit"
             form="profile"
-            disabled={!isActiveEdit}
-            className={`profile__links-item ${isActiveEdit && 'hover'}`}
+           
+          //  disabled={!isUserDataChanged || !isValid }
+           disabled={!isActiveEdit || !isValid }
+            className={`profile__links-item ${isActiveEdit && 'hover profile__edit-message_active'}`}
+            // profile__links-item_disabled
+            // className={`profile__links-item ${!isUserDataChanged || isValid ? '' : 'hover'}  `}
+           
           >
             Редактировать
           </button>

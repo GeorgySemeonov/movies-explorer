@@ -102,6 +102,10 @@ profile__edit-message_disable {
     padding-top: 16px;
 }
 
+.profile__links-item_disabled{
+    opacity: 0.7;
+}
+
 .profile__links-item_message {
     float: none;
 }

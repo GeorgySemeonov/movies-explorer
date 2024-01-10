@@ -10,67 +10,86 @@ import searchFilter from '../../utils/Filter';
 import "./Movies.css";
 
 function Movies() {
-  const [movies, setMovies] = React.useState([]);
+
   const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState(''); 
+  const [saveMovies, setSaveMovies] = React.useState([]);
+  const [movieError, setMovieError] = React.useState(''); 
 
-  React.useEffect(() => {
-    const savedMovies = localStorage.getItem('savedMovies');
-    if (!savedMovies) {
-      setIsLoading(true);
-      mainApi
-        .getUsersMovies()
-        .then((data) => {
-          if (data.length > 0) {
-            localStorage.setItem('savedMovies', JSON.stringify(data));
-          }
-          setIsLoading(false);
-        })
-        .catch(() => {
-          setError("Ошибка. Проверьте подключение");
-        });
-    }
-  }, []);
+  // React.useEffect(() => {
+  //   const savedMovies = localStorage.getItem('savedMovies');
+  //   if (!savedMovies) {
+  //     setIsLoading(true);
+  //     mainApi
+  //       .getSavedMovies()
+  //       .then((data) => {
+  //         if (data.length > 0) {
+  //           localStorage.setItem('savedMovies', JSON.stringify(data));
+  //         }
+  //         setIsLoading(false);
+  //       })
+  //       .catch(() => {
+  //         setMovieError("Ошибка. Проверьте подключение");
+  //       });
+  //   }
+  // }, []);
 
-  const filter = (query, shorts) => {
+  const moviesFilter = (query, shorts) => {
+    setIsLoading(true);
+    setMovieError('');
     const storedMovies = JSON.parse(localStorage.getItem('movies'));
-    const filtered = searchFilter(storedMovies, query, shorts);
-    if (filtered.length === 0) {
-      setError("Ничего не найдено");
+    const filteredMovies = searchFilter(storedMovies, query, shorts);
+    if (filteredMovies.length === 0) {
+      setMovieError("Ничего не найдено");
     }
-    setMovies(filtered);
+    setSaveMovies(filteredMovies);
     setIsLoading(false);
   };
 
-  const handleSearch = (query, shorts) => {
+  const movieSearcher = (query, isShort) => {
     setIsLoading(true);
-    
-    const storedMovies = JSON.parse(localStorage.getItem('movies'));
-    if (!storedMovies) {
-      moviesApi
-        .getAllMovies()
+    const moviesArray = JSON.parse(localStorage.getItem('movies'));
+    if (!moviesArray) {
+      moviesApi.getMovies()
         .then((films) => {
           localStorage.setItem('movies', JSON.stringify(films));
-          filter(query, shorts);
+          moviesFilter(query, isShort);
         })
         .catch(() => {
-          setError("Ошибка. Проверьте подключение");
+          setMovieError("Ошибка. Проверьте подключение");
         });
     } else {
-      filter(query, shorts);
+      moviesFilter(query, isShort);
     }
   };
+//  React.useEffect((query, isShort) => {
+
+//    setIsLoading(true);
+//     const moviesArray = JSON.parse(localStorage.getItem('movies'));
+//     if (!moviesArray) {
+//       moviesApi.getMovies()
+//         .then((films) => {
+//           localStorage.setItem('movies', JSON.stringify(films));
+//           moviesFilter(query, isShort);
+//         })
+//         .catch(() => {
+//           setMovieError("Ошибка. Проверьте подключение");
+//         });
+//     } else {
+//       moviesFilter(query, isShort);
+//     }
+//   }, []);
+
 
   return (
     
 <main>
 
 <div className="movies">
-      <SearchForm handleSearch={handleSearch} />
+      <SearchForm handleSearch={movieSearcher} />
       {isLoading ? (
         <Preloader />
       ) : (
-        <MoviesCardList movies={movies} error={error} />
+        <MoviesCardList saveMovies={saveMovies} movieError={movieError} />
       )}
     </div>
 
