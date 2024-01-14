@@ -16,18 +16,27 @@ function MoviesCardList({ saveMovies, movieError }) {
 
   const setMoviesRules = () => {
     const width = window.innerWidth;
-    if (location.pathname === '/saved-movies') {
-      setMaxMovies(saveMovies.length);
-    }
+    // if (location.pathname === '/saved-movies') {
+    //  // setMaxMovies(saveMovies.length);
+    //   console.log(saveMovies.length);
+    //   console.log(location.pathname);
+    //   setMaxMovies(28)
+    // }
     if (width <= 720) {
       setMaxMovies(5);
       setStep(2);
     } else if (width <= 1000) {
       setMaxMovies(8);
       setStep(2);
-    } else if (width <= 1279) {
+    } else if (width <= 1280) {
       setMaxMovies(16);
       setStep(4);
+     } if (location.pathname === '/saved-movies') {
+        setMaxMovies(saveMovies.length);
+        //  console.log(saveMovies.length);
+        //  console.log(location.pathname);
+        //  setMaxMovies(28)
+       
     } else {
       setMaxMovies(16);
       setStep(4);

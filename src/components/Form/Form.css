@@ -119,6 +119,10 @@
     box-sizing: border-box;
 }
 
+/* .button__hover {
+    transition:  0.2s linear;
+} */
+
 .form__inputs-item_profile {
 
     text-align: right;
@@ -199,6 +203,7 @@
 }
 
 .button__sumbit {
+    
     background: #4285F4;
     border: none;
     height: 45px;
@@ -210,10 +215,17 @@
     padding: 0;
 }
 
+
+
+
 .button__sumbit_disable {
     background: #F8F8F8;
     color: #C2C2C2;
+    transition: none;
+    pointer-events: none;
+    /* cursor: not-allowed; */
 }
+
 
 .form__bottom-signin {
     display: flex;

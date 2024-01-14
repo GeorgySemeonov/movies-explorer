@@ -30,9 +30,12 @@ const errorMessages = {
       "Пароль не соответствует требованиям.",
 };
 
-React.useEffect(() => {
-    setIsValid(!Object.values(errors).some((err) => err.length !== 0));
-}, [errors]);
+
+
+// React.useEffect(() => {
+  
+//     setIsValid(!Object.values(errors).some((err) => err.length !== 0));
+// }, [errors]);
 
 function errMessage({name, value}) {
     if (name === "name" && value.length >= 2 && !patternName.test(value)) {
@@ -43,7 +46,6 @@ function errMessage({name, value}) {
         setErrors({...errors, [name]: errorMessages[name]})
     }
 }
-
 
 
    function handleChange(evt) {
@@ -174,9 +176,10 @@ function errMessage({name, value}) {
       <div className="form__bottom">
         <button
           type="submit"
-          className={`button__sumbit  hover
+          className={`button__sumbit 
+          hover
           
-          ${!isValid && 'button__sumbit_disable'}
+          ${!isValid ? '  button__sumbit_disable' : ''}
 
           
          `}

@@ -236,9 +236,10 @@ const [errorEdit, setErrorEdit] = React.useState(false);
            
           //  disabled={!isUserDataChanged || !isValid }
            disabled={!isActiveEdit || !isValid }
-            className={`profile__links-item ${isActiveEdit && 'hover profile__edit-message_active'}`}
+            className={` profile__links-edit ${isActiveEdit ? ' profile__edit-message_active hover'  : ''}`}
             // profile__links-item_disabled
             // className={`profile__links-item ${!isUserDataChanged || isValid ? '' : 'hover'}  `}
+           // ${!isUserDataChanged || !isValid ? 'profile__button-edit_disabled' : ''}
            
           >
             Редактировать
