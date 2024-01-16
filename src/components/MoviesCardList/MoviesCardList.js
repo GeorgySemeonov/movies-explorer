@@ -31,15 +31,15 @@ function MoviesCardList({ saveMovies, movieError }) {
     } else if (width <= 1280) {
       setMaxMovies(16);
       setStep(4);
-     } if (location.pathname === '/saved-movies') {
-        setMaxMovies(saveMovies.length);
-        //  console.log(saveMovies.length);
-        //  console.log(location.pathname);
-        //  setMaxMovies(28)
-       
     } else {
+      // console.log(saveMovies.length);
       setMaxMovies(16);
       setStep(4);
+    }   if (location.pathname === '/saved-movies') {
+      setMaxMovies(saveMovies.length);
+      //  console.log(saveMovies.length);
+      //  console.log(location.pathname);
+      //  setMaxMovies(28)
     }
   };
 

@@ -19,6 +19,25 @@ function Form({ nameForm, title, buttonText, linkText, bottomText,onSubmit }) {
 //     var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 //     return re.test(emailValue)
 // };
+
+
+const resetForms = useCallback(
+  (updatedValues = {}, updatedErrors = {}, updatedIsValid = false) => {
+    setValues(updatedValues);
+    setErrors(updatedErrors);
+    setIsValid(updatedIsValid);
+    
+  },
+  [setValues, setErrors, setIsValid]
+);
+
+
+
+useEffect(() => {
+ resetForms();
+}, [resetForms]);
+
+
 const patternName = /^[a-zA-Zа-яА-ЯёЁ\- ]+$/;
 const patternPassword = /^[0-9a-zA-Z\sёЁ_\.\- ].{6,}/i;
 const patternEmail = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/; 
@@ -31,7 +50,6 @@ const errorMessages = {
 };
 
 
-
 // React.useEffect(() => {
   
 //     setIsValid(!Object.values(errors).some((err) => err.length !== 0));
@@ -40,13 +58,13 @@ const errorMessages = {
 function errMessage({name, value}) {
     if (name === "name" && value.length >= 2 && !patternName.test(value)) {
         setErrors({...errors, [name]: errorMessages[name]});
-    } else if (name === "email" && !patternEmail.test(value)) {
+    } else if (name === "email" && value.length >= 2 && !patternEmail.test(value)) {
         setErrors({...errors, [name]: errorMessages[name]})
+        setIsValid(!Object.values(errors).some((err) => err.length !== 0));
     } else if (name === "password" && value.length >= 6 && !patternPassword.test(value)) {
         setErrors({...errors, [name]: errorMessages[name]})
     }
 }
-
 
    function handleChange(evt) {
     //  const name = evt.target.name;
@@ -54,24 +72,10 @@ function errMessage({name, value}) {
     const { name, value } = evt.target;
      setValues({ ...values, [name]: value });
      setErrors({ ...errors, [name]: evt.target.validationMessage });
+    //  setIsValid(!Object.values(errors).some((err) => err.length !== 0));
      setIsValid(evt.target.closest('form').checkValidity());
      errMessage({ name, value });
    }
-
-   const resetForms = useCallback(
-     (updatedValues = {}, updatedErrors = {}, updatedIsValid = false) => {
-       setValues(updatedValues);
-       setErrors(updatedErrors);
-       setIsValid(updatedIsValid);
-     },
-     [setValues, setErrors, setIsValid]
-   );
-
-
-
-   useEffect(() => {
-    resetForms();
-  }, [resetForms]);
 
   return (
 
@@ -125,15 +129,16 @@ function errMessage({name, value}) {
       //  /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/
 {...register('email', {
   required: true,
-  // pattern:validateEmail,
+  // pattern:patternEmail,
 })}
+
 
           type="email"
           name="email"
           className={ `form__inputs-item ${errors.email ? "form__inputs-item_invalid" : ""}`}
           onChange={handleChange}
           value={values.email || ''}
-          //  pattern={"/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"}
+          //  pattern={"/^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/"}
           placeholder="E-mail"
           minLength="6"
           required
