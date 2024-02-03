@@ -50,6 +50,11 @@ function MoviesCardList({ saveMovies, movieError }) {
         setMoviesRules();
       }, 500);
     });
+    window.addEventListener('submit', () => {
+      setTimeout(() => {
+        setMoviesRules();
+      }, 500);
+    });
   }, []);
 
   return (

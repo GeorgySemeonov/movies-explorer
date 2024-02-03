@@ -40,6 +40,7 @@ function SearchForm({ handleSearch }) {
   };
 
   React.useEffect(() => {
+    // setMoviesRules();
     if (pathname === '/movies') {
       const savedInputValue = localStorage.getItem('query');
       const savedShorts = JSON.parse(localStorage.getItem('shorts'));

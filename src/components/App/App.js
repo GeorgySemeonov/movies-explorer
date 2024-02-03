@@ -123,9 +123,9 @@ function App() {
           if (user) {
             setLoggedIn(true);
             localStorage.setItem('id', user.data._id); 
-            console.log('realPath', realPath);
+            // console.log('realPath', realPath);
             setCurrentUser(user.data);
-            console.log(user.data)
+            // console.log(user.data)
             history.push(realPath);
           } else {
             setLoggedIn(false);
@@ -146,7 +146,7 @@ function App() {
         const jwt = localStorage.getItem('jwt');
         const realPath = location.pathname;
         setIsLoading(true);
-        console.log(realPath);
+        // console.log(realPath);
         auth(jwt, realPath).finally(() => {
           setIsLoading(false);
         });

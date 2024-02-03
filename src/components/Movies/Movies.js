@@ -34,6 +34,7 @@ function Movies() {
   // }, []);
 
   const moviesFilter = (query, shorts) => {
+    // setMoviesRules();
     setIsLoading(true);
     setMovieError('');
     const storedMovies = JSON.parse(localStorage.getItem('movies'));
@@ -43,9 +44,11 @@ function Movies() {
     }
     setSaveMovies(filteredMovies);
     setIsLoading(false);
+    // setMoviesRules();
   };
 
   const movieSearcher = (query, isShort) => {
+    
     setIsLoading(true);
     const moviesArray = JSON.parse(localStorage.getItem('movies'));
     if (!moviesArray) {
@@ -53,11 +56,14 @@ function Movies() {
         .then((films) => {
           localStorage.setItem('movies', JSON.stringify(films));
           moviesFilter(query, isShort);
+          // // setMoviesRules();
+          // setMoviesRules();
         })
         .catch(() => {
           setMovieError("Ошибка. Проверьте подключение");
         });
     } else {
+    // console.log(setMoviesRules());  
       moviesFilter(query, isShort);
     }
   };

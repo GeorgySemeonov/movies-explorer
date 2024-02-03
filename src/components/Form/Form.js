@@ -15,6 +15,8 @@ function Form({ nameForm, title, buttonText, linkText, bottomText,onSubmit }) {
    const [values, setValues] = useState({});
    const [errors, setErrors] = useState({});
    const [isValid, setIsValid] = useState({});
+   const [isInputs, setisInputs] = React.useState(false);
+
 //    var validateEmail = function(emailValue) {
 //     var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 //     return re.test(emailValue)
@@ -31,11 +33,16 @@ const resetForms = useCallback(
   [setValues, setErrors, setIsValid]
 );
 
-
+// React.useEffect(() => {
+  
+//   setIsValid(!Object.values(errors).some((err) => err.length >= 0));
+// }, [errors]);
 
 useEffect(() => {
  resetForms();
 }, [resetForms]);
+
+
 
 
 const patternName = /^[a-zA-Zа-яА-ЯёЁ\- ]+$/;
@@ -50,21 +57,47 @@ const errorMessages = {
 };
 
 
-// React.useEffect(() => {
+React.useEffect(() => {
   
-//     setIsValid(!Object.values(errors).some((err) => err.length !== 0));
-// }, [errors]);
+  setIsValid(!Object.values(errors).some((err) => err.length !== 0));
+}, [errors]);
 
 function errMessage({name, value}) {
     if (name === "name" && value.length >= 2 && !patternName.test(value)) {
         setErrors({...errors, [name]: errorMessages[name]});
+        // setIsValid(!Object.values(errors).some((err) => err.length >= 0));
     } else if (name === "email" && value.length >= 2 && !patternEmail.test(value)) {
         setErrors({...errors, [name]: errorMessages[name]})
-        setIsValid(!Object.values(errors).some((err) => err.length !== 0));
-    } else if (name === "password" && value.length >= 6 && !patternPassword.test(value)) {
+        
+        // setIsValid(!Object.values(errors).some((err) => err.length >= 0));
+    } else if (name === "password" && value.length >= 7 && !patternPassword.test(value)) {
         setErrors({...errors, [name]: errorMessages[name]})
     }
 }
+
+
+React.useEffect(() => {
+  checkInputs();
+},// eslint-disable-next-line
+[values]);
+
+function checkInputs () {
+  if ((values.name && values.email && values.password) !== undefined) {
+      setisInputs(true);
+  } else {
+      setisInputs(false);
+  }
+}
+
+// console.log(isInputs);
+// console.log(isValid);
+
+// function handleValid() {
+// //  setIsValid(evt.target.closest('form').checkValidity());
+//    setIsValid(!Object.values(errors).some((err) => err.length !== 0));
+
+//  }
+
 
    function handleChange(evt) {
     //  const name = evt.target.name;
@@ -73,8 +106,11 @@ function errMessage({name, value}) {
      setValues({ ...values, [name]: value });
      setErrors({ ...errors, [name]: evt.target.validationMessage });
     //  setIsValid(!Object.values(errors).some((err) => err.length !== 0));
-     setIsValid(evt.target.closest('form').checkValidity());
+    
+    // setIsValid(!Object.values(errors).some((err) => err.length >= 0));
+    // setIsValid(evt.target.closest('form').checkValidity());
      errMessage({ name, value });
+     
    }
 
   return (
@@ -184,12 +220,12 @@ function errMessage({name, value}) {
           className={`button__sumbit 
           hover
           
-          ${!isValid ? '  button__sumbit_disable' : ''}
+          ${!isValid  ? '  button__sumbit_disable' : ''}
 
-          
+          ${!isInputs ? '  button__sumbit_disable' : ''}
          `}
 
-          disabled={!isValid}
+          disabled={!isValid  }
         >
           {buttonText}
         </button>
